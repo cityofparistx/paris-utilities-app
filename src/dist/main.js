@@ -8,7 +8,9 @@ map = L.map('map', {
 	fadeAnimation: true
 });
 
-L.esri.basemapLayer('Gray').addTo(map);
+//L.esri.basemapLayer('Gray').addTo(map);
+//var ggl = new L.Google();
+//map.addLayer(ggl);
 
 var geojsonMarkerOptions = {
     radius: 6,
@@ -37,7 +39,9 @@ var waterHydrantLayer = L.esri.featureLayer('http://services2.arcgis.com/YXGc5lG
     minZoom: 16,
     maxZoom: 20,
     pointToLayer: function (feature, latlng) {  
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+            hydrantStyle = geojsonMarkerOptions;
+            hydrantStyle.fillColor = "Red";
+            return L.circleMarker(latlng, hydrantStyle);
         }
 });
 
@@ -47,8 +51,9 @@ var waterValveLayer = L.esri.featureLayer('http://services2.arcgis.com/YXGc5lG6e
     minZoom: 19,
     maxZoom: 20,
     pointToLayer: function (feature, latlng) { 
-            geojsonMarkerOptions.fillColor = "Blue";        
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+            valveStyle = geojsonMarkerOptions;
+            valveStyle.fillColor = "Blue";
+            return L.circleMarker(latlng, valveStyle);
         }
 });
 
@@ -57,8 +62,9 @@ var waterFittingLayer = L.esri.featureLayer('http://services2.arcgis.com/YXGc5lG
     minZoom: 20,
     maxZoom: 20,
     pointToLayer: function (feature, latlng) { 
-            geojsonMarkerOptions.fillColor = "Purple";        
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+            wfittingStyle = geojsonMarkerOptions;
+            wfittingStyle.fillColor = "Purple";     
+            return L.circleMarker(latlng, wfittingStyle);
         }
 });
 
@@ -67,8 +73,9 @@ var waterMeterLayer = L.esri.featureLayer('http://services2.arcgis.com/YXGc5lG6e
     minZoom: 19,
     maxZoom: 20,
     pointToLayer: function (feature, latlng) {
-            geojsonMarkerOptions.fillColor = "Green";
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+            meterStyle = geojsonMarkerOptions;
+            meterStyle.fillColor = "Green";
+            return L.circleMarker(latlng, meterStyle);
         }
 });
 
@@ -96,8 +103,9 @@ var sewerLiftStationLayer = L.esri.featureLayer('http://services2.arcgis.com/YXG
     minZoom: 12,
     maxZoom: 20,
     pointToLayer: function (feature, latlng) {  
-            geojsonMarkerOptions.fillColor = "Gray";
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+            liftStationStyle = geojsonMarkerOptions;
+            liftStationStyle.fillColor = "Gray";
+            return L.circleMarker(latlng, liftStationStyle);
         }
 });
 
@@ -106,8 +114,9 @@ var sewerFittingLayer = L.esri.featureLayer('http://services2.arcgis.com/YXGc5lG
     minZoom: 20,
     maxZoom: 20,
     pointToLayer: function (feature, latlng) {  
-            geojsonMarkerOptions.fillColor = "Purple";
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+            sfittingStyle = geojsonMarkerOptions;
+            sfittingStyle.fillColor = "Purple";
+            return L.circleMarker(latlng, sfittingStyle);
         }
 });
 
@@ -116,18 +125,20 @@ var sewerCleanoutLayer = L.esri.featureLayer('http://services2.arcgis.com/YXGc5l
     minZoom: 17,
     maxZoom: 20,
     pointToLayer: function (feature, latlng) {  
-            geojsonMarkerOptions.fillColor = "Orange";
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+            cleanoutStyle = geojsonMarkerOptions;
+            cleanoutStyle.fillColor = "Orange";
+            return L.circleMarker(latlng, cleanoutStyle);
         }
 });
 
 //Sewer Manholes
 var sewerManholeLayer = L.esri.featureLayer('http://services2.arcgis.com/YXGc5lG6eRCB6XBL/arcgis/rest/services/sewer/FeatureServer/5', {
-    minZoom: 16,
+    minZoom: 17,
     maxZoom: 20,
-    pointToLayer: function (feature, latlng) {  
-            geojsonMarkerOptions.fillColor = "Yellow";
-            return L.circleMarker(latlng, geojsonMarkerOptions);
+    pointToLayer: function (feature, latlng) { 
+            manholeStyle = geojsonMarkerOptions;
+            manholeStyle.fillColor = "Yellow";
+            return L.circleMarker(latlng, manholeStyle);
         }
 });
 
@@ -168,6 +179,12 @@ map.on('zoomend', function(e) {
         
     }
     if (map.getZoom() <= 16) {
+        sewerLayerGroup.removeLayer(sewerCleanoutLayer);
+        sewerLayerGroup.addLayer(sewerCleanoutLayer);
+        
+        sewerLayerGroup.removeLayer(sewerManholeLayer);
+        sewerLayerGroup.addLayer(sewerManholeLayer);
+        
         waterLayerGroup.removeLayer(waterMainLayer);
         waterLayerGroup.addLayer(waterMainLayer);
     
@@ -176,12 +193,7 @@ map.on('zoomend', function(e) {
         
         sewerLayerGroup.removeLayer(sewerForceMainLayer);
         sewerLayerGroup.addLayer(sewerForceMainLayer);
-    
-        sewerLayerGroup.removeLayer(sewerCleanoutLayer);
-        sewerLayerGroup.addLayer(sewerCleanoutLayer);
-        
-        sewerLayerGroup.removeLayer(sewerManholeLayer);
-        sewerLayerGroup.addLayer(sewerManholeLayer);
+
     }
     if (map.getZoom() <= 18) {
         waterLayerGroup.removeLayer(waterValveLayer);
